@@ -100,3 +100,26 @@ fun MainScreen(viewModel: MainViewModel) {
                     }
                 }
             }
+        ) { paddingValues ->
+            NavHost(
+                navController = navController,
+                startDestination = Screen.Home.route,
+                modifier = Modifier.padding(paddingValues)
+            ) {
+                composable(Screen.Home.route) {
+                    ProductListScreen(viewModel, navController)
+                }
+                composable(Screen.Favorites.route) {
+                    FavoritesScreen(viewModel)
+                }
+                composable(Screen.Cart.route) {
+                    CartScreen(viewModel)
+                }
+                composable("${Screen.ProductDetail.route}/{productId}") { backStackEntry ->
+                    val productId = backStackEntry.arguments?.getString("productId")?.toIntOrNull()
+                    ProductDetailScreen(viewModel, productId, navController)
+                }
+            }
+        }
+    }
+}
