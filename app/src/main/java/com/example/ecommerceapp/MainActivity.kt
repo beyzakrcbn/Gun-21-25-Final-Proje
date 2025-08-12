@@ -39,3 +39,18 @@ sealed class Screen(val route: String, val title: String, val icon: ImageVector)
     object Cart : Screen("cart", "Sepet", Icons.Filled.ShoppingCart)
     object ProductDetail : Screen("product_detail", "Ürün Detayı", Icons.Filled.Info)
 }
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MainScreen(viewModel: MainViewModel) {
+    val navController = rememberNavController()
+    var isLoggedIn by remember { mutableStateOf(false) }
+
+    if (!isLoggedIn) {
+        LoginScreen { isLoggedIn = true }
+    } else {
+        val bottomBarScreens = listOf(
+            Screen.Home,
+            Screen.Favorites,
+            Screen.Cart
+        )
+    }
