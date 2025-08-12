@@ -31,3 +31,11 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+sealed class Screen(val route: String, val title: String, val icon: ImageVector) {
+    object Login : Screen("login", "Giriş", Icons.Filled.Person)
+    object Home : Screen("home", "Ürünler", Icons.Filled.Home)
+    object Favorites : Screen("favorites", "Favoriler", Icons.Filled.Favorite)
+    object Cart : Screen("cart", "Sepet", Icons.Filled.ShoppingCart)
+    object ProductDetail : Screen("product_detail", "Ürün Detayı", Icons.Filled.Info)
+}
