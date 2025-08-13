@@ -94,3 +94,25 @@ fun ProductListScreen(
                     )
                 }
             }
+
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(products.filter {
+                    it.name.contains(searchQuery, ignoreCase = true)
+                }) { product ->
+                    ProductCard(
+                        product = product,
+                        onProductClick = {
+                            navController.navigate("product_detail/${product.id}")
+                        },
+                        onAddToCart = {
+                            viewModel.addToCart(product)
+                        }
+                    )
+                }
+            }
+        }
+    }
