@@ -116,3 +116,46 @@ fun ProductListScreen(
             }
         }
     }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun ProductCard(
+        product: Product,
+        onProductClick: () -> Unit,
+        onAddToCart: () -> Unit
+    ) {
+        var isAddedToCart by remember { mutableStateOf(false) }
+
+        ElevatedCard(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onProductClick() },
+            elevation = CardDefaults.elevatedCardElevation(defaultElevation = 6.dp),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Top
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = product.name,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        Text(
+                            text = "$${product.price}",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
