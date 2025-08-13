@@ -6,9 +6,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import com.yourpackage.data.Product
-import com.yourpackage.data.CartItem
-import com.yourpackage.repository.ProductRepository
+import com.ecommerceapp.data.Product
+import com.ecommerceapp.data.CartItem
+import com.ecommerceapp.repository.ProductRepository
 
 
 class MainViewModel : ViewModel() {
