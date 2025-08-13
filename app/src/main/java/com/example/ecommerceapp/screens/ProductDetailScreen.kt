@@ -52,3 +52,28 @@ fun ProductDetailScreen(
         }
         return
     }
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(product.name) },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Geri")
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { /* Add to favorites */ }) {
+                        Icon(Icons.Default.FavoriteBorder, contentDescription = "Favorilere Ekle")
+                    }
+                    IconButton(onClick = { /* Share */ }) {
+                        Icon(Icons.Default.Share, contentDescription = "Paylaş")
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = Color.White,
+                    navigationIconContentColor = Color.White,
+                    actionIconContentColor = Color.White
+                )
+            )
+        }
