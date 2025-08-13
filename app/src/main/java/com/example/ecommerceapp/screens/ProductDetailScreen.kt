@@ -168,5 +168,60 @@ fun ProductDetailScreen(
                             modifier = Modifier.padding(start = 4.dp)
                         )
                     }
+                    Spacer(modifier = Modifier.height(24.dp))
 
-                   
+                    // Description
+                    Text(
+                        text = "Ürün Açıklaması",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(
+                        text = product.description,
+                        fontSize = 16.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        lineHeight = 24.sp
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    // Quantity Selector
+                    Text(
+                        text = "Miktar",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        OutlinedButton(
+                            onClick = { if (selectedQuantity > 1) selectedQuantity-- },
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Icon(Icons.Default.Remove, contentDescription = "Azalt")
+                        }
+                    }
+
+                    Text(
+                        text = selectedQuantity.toString(),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    OutlinedButton(
+                        onClick = { selectedQuantity++ },
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Icon(Icons.Default.Add, contentDescription = "Artır")
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(32.dp))
