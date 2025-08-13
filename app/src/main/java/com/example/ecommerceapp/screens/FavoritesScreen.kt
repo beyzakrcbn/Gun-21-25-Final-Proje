@@ -79,3 +79,52 @@ fun FavoritesScreen(viewModel: MainViewModel) {
                 }
             }
         }
+
+        if (favorites.isEmpty()) {
+            // Empty State
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Icon(
+                        Icons.Default.FavoriteBorder,
+                        contentDescription = null,
+                        modifier = Modifier.size(80.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = "Henüz favori ürününüz yok",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Medium,
+                        textAlign = TextAlign.Center
+                    )
+                    Text(
+                        text = "Beğendiğiniz ürünleri favorilere ekleyin",
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        } else {
+            // Favorites List
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(favorites) { product ->
+                    FavoriteProductCard(
+                        product = product,
+                        onAddToCart = { viewModel.addToCart(product) },
+                        onRemoveFromFavorites = { /* TODO: Implement remove from favorites */ }
+                    )
+                }
+            }
+        }
+    }
+}
