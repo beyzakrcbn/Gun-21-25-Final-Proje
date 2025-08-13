@@ -48,5 +48,49 @@ fun ProductListScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface)
+
     ) {val products by viewModel.products.collectAsStateWithLifecycle()
         var searchQuery by remember { mutableStateOf("") }
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surface)
+        ) {
+            // Top Bar with Search
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                color = MaterialTheme.colorScheme.primary,
+                shadowElevation = 8.dp
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Text(
+                        text = "E-Commerce App",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    OutlinedTextField(
+                        value = searchQuery,
+                        onValueChange = { searchQuery = it },
+                        placeholder = { Text("Ürün ara...") },
+                        leadingIcon = {
+                            Icon(Icons.Default.Search, contentDescription = "Ara")
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(25.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Color.White,
+                            unfocusedBorderColor = Color.White.copy(alpha = 0.5f),
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Color.White,
+                            cursorColor = Color.White
+                        )
+                    )
+                }
+            }
