@@ -75,7 +75,7 @@ fun ProductDetailScreen(
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
         ) {
-            // Product Image
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -101,7 +101,7 @@ fun ProductDetailScreen(
                 )
             }
 
-            // Product Details
+
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -130,7 +130,7 @@ fun ProductDetailScreen(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Rating
+
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -160,7 +160,7 @@ fun ProductDetailScreen(
                     }
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    // Description
+
                     Text(
                         text = "Ürün Açıklaması",
                         fontSize = 20.sp,
