@@ -20,7 +20,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.ecommerceapp.data.Product  // Bu import de gerekli
+import com.example.ecommerceapp.data.Product
 import com.example.ecommerceapp.viewmodel.MainViewModel
 import java.text.NumberFormat
 

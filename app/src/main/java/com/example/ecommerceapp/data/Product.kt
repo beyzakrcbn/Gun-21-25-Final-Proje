@@ -9,7 +9,7 @@ data class Product(
     val category: String = "",
     val rating: Float = 0f,
     val stock: Int = 0,
-    val reviews: Int = 0  // Bu satırı ekleyin
+    val reviews: Int = 0  // Bu satır
 )
 
 object SampleData {
@@ -22,7 +22,7 @@ object SampleData {
             category = "Electronics",
             rating = 4.5f,
             stock = 25,
-            reviews = 1284  // Reviews sayısını ekleyin
+            reviews = 1284  // Reviews sayısı
         ),
         Product(
             id = 2,

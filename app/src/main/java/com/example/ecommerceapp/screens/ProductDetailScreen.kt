@@ -179,7 +179,7 @@ fun ProductDetailScreen(
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    // Quantity Selector
+
                     Text(
                         text = "Miktar",
                         fontSize = 18.sp,

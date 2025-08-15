@@ -140,7 +140,7 @@ fun CartScreen(viewModel: MainViewModel) {
                             Text("Sipariş Özeti", fontSize = 18.sp, fontWeight = FontWeight.Bold)
                             Spacer(Modifier.height(12.dp))
 
-                            // Düzeltme: Row parametrelerini doğru sırayla kullanın
+
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween

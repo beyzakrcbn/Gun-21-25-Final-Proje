@@ -1,4 +1,3 @@
-// screens/ProductListScreen.kt
 package com.example.ecommerceapp.screens
 
 import androidx.compose.foundation.background

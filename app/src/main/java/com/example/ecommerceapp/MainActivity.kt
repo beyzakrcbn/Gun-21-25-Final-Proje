@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -17,23 +17,29 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.ecommerceapp.data.ThemePreferences
 import com.example.ecommerceapp.ui.theme.ECommerceAppTheme
 import com.example.ecommerceapp.screens.*
 import com.example.ecommerceapp.viewmodel.MainViewModel
+import com.example.ecommerceapp.viewmodel.MainViewModelFactory
 
 class MainActivity : ComponentActivity() {
-    private val viewModel: MainViewModel by viewModels()
+
+    private val viewModel: MainViewModel by viewModels {
+        MainViewModelFactory(ThemePreferences(this))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            ECommerceAppTheme {
-                MainScreen(viewModel)
+            val darkTheme by viewModel.isDarkTheme.collectAsState()
+
+            ECommerceAppTheme(darkTheme = darkTheme) {
+                MainScreen(viewModel, darkTheme)
             }
         }
     }
 }
-
 
 sealed class Screen(val route: String, val title: String, val icon: ImageVector) {
     object Login : Screen("login", "Giriş", Icons.Filled.Person)
@@ -45,7 +51,7 @@ sealed class Screen(val route: String, val title: String, val icon: ImageVector)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(viewModel: MainViewModel) {
+fun MainScreen(viewModel: MainViewModel, darkTheme: Boolean) {
     val navController = rememberNavController()
     var isLoggedIn by remember { mutableStateOf(false) }
 
@@ -59,6 +65,19 @@ fun MainScreen(viewModel: MainViewModel) {
         )
 
         Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text("ShopApp") },
+                    actions = {
+                        IconButton(onClick = { viewModel.toggleTheme() }) {
+                            Icon(
+                                imageVector = if (darkTheme) Icons.Filled.DarkMode else Icons.Filled.LightMode,
+                                contentDescription = "Tema Değiştir"
+                            )
+                        }
+                    }
+                )
+            },
             bottomBar = {
                 NavigationBar {
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
