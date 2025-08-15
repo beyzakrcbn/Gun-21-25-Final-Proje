@@ -1,8 +1,6 @@
 package com.example.ecommerceapp.repository
 
-
-
-import com.ecommerceapp.data.Product
+import com.example.ecommerceapp.data.Product
 
 class ProductRepository {
     fun getProducts(): List<Product> = listOf(
