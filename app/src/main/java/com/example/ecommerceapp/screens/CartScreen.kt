@@ -123,7 +123,7 @@ fun CartScreen(viewModel: MainViewModel) {
                     }
                 }
 
-
+                
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
                     shadowElevation = 8.dp,
@@ -140,7 +140,7 @@ fun CartScreen(viewModel: MainViewModel) {
                             Text("Sipariş Özeti", fontSize = 18.sp, fontWeight = FontWeight.Bold)
                             Spacer(Modifier.height(12.dp))
 
-
+                            // Düzeltme: Row parametrelerini doğru sırayla kullanın
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
@@ -202,4 +202,105 @@ fun CartScreen(viewModel: MainViewModel) {
     }
 }
 
+@Composable
+fun HorizontalDivider(x0: Modifier) {
+    TODO("Not yet implemented")
+}
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CartItemCard(
+    cartItem: CartItem,
+    onQuantityChange: (Int) -> Unit,
+    onRemoveItem: () -> Unit
+) {
+    ElevatedCard(
+        modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Column(Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.Top
+            ) {
+                // Placeholder görsel
+                Box(
+                    modifier = Modifier
+                        .size(80.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(
+                            Brush.linearGradient(
+                                colors = listOf(
+                                    MaterialTheme.colorScheme.primary,
+                                    MaterialTheme.colorScheme.secondary
+                                )
+                            )
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(Icons.Default.Phone, contentDescription = "Ürün", tint = Color.White, modifier = Modifier.size(32.dp))
+                }
+
+                Spacer(Modifier.width(16.dp))
+
+                Column(Modifier.weight(1f)) {
+                    Text(cartItem.product.name, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        "${currency(cartItem.product.price)} / adet",
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        "Toplam: ${currency(cartItem.product.price * cartItem.quantity)}",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+
+                IconButton(
+                    onClick = onRemoveItem,
+                    colors = IconButtonDefaults.iconButtonColors(contentColor = Color.Red)
+                ) {
+                    Icon(Icons.Default.Delete, contentDescription = "Sepetten çıkar")
+                }
+            }
+
+            Spacer(Modifier.height(16.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                OutlinedButton(
+                    onClick = { if (cartItem.quantity > 1) onQuantityChange(cartItem.quantity - 1) },
+                    modifier = Modifier.size(40.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    contentPadding = PaddingValues(0.dp)
+                ) {
+                    Icon(Icons.Default.Remove, contentDescription = "Azalt", modifier = Modifier.size(16.dp))
+                }
+
+                Text(
+                    cartItem.quantity.toString(),
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(horizontal = 24.dp)
+                )
+
+                OutlinedButton(
+                    onClick = { onQuantityChange(cartItem.quantity + 1) },
+                    modifier = Modifier.size(40.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    contentPadding = PaddingValues(0.dp)
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = "Artır", modifier = Modifier.size(16.dp))
+                }
+            }
+        }
+    }
+}
