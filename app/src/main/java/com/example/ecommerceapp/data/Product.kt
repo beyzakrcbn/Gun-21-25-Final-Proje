@@ -8,7 +8,8 @@ data class Product(
     val imageUrl: String = "",
     val category: String = "",
     val rating: Float = 0f,
-    val stock: Int = 0
+    val stock: Int = 0,
+    val reviews: Int = 0  // Bu satırı ekleyin
 )
 
 object SampleData {
@@ -20,7 +21,8 @@ object SampleData {
             description = "Latest iPhone with A14 Bionic chip, 5G support, and amazing camera system.",
             category = "Electronics",
             rating = 4.5f,
-            stock = 25
+            stock = 25,
+            reviews = 1284  // Reviews sayısını ekleyin
         ),
         Product(
             id = 2,
@@ -29,7 +31,8 @@ object SampleData {
             description = "MacBook Pro 13-inch with M1 chip, 8GB unified memory, and 256GB SSD storage.",
             category = "Electronics",
             rating = 4.7f,
-            stock = 15
+            stock = 15,
+            reviews = 892
         ),
         Product(
             id = 3,
@@ -38,7 +41,8 @@ object SampleData {
             description = "Active Noise Cancellation, Transparency mode, and spatial audio.",
             category = "Electronics",
             rating = 4.6f,
-            stock = 50
+            stock = 50,
+            reviews = 2156
         ),
         Product(
             id = 4,
@@ -47,7 +51,8 @@ object SampleData {
             description = "Apple Watch Series 7 with larger Always-On Retina display.",
             category = "Electronics",
             rating = 4.4f,
-            stock = 30
+            stock = 30,
+            reviews = 756
         ),
         Product(
             id = 5,
@@ -56,7 +61,8 @@ object SampleData {
             description = "iPad Air with 10.9-inch Liquid Retina display and A14 Bionic chip.",
             category = "Electronics",
             rating = 4.5f,
-            stock = 20
+            stock = 20,
+            reviews = 1043
         )
     )
 }
