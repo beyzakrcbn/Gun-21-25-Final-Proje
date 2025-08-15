@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(viewModel: MainViewModel, onLoginSuccess: () -> Unit) {
-    var email by remember { mutableStateOf("") }
+    var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(false) }
@@ -38,7 +38,6 @@ fun LoginScreen(viewModel: MainViewModel, onLoginSuccess: () -> Unit) {
     LaunchedEffect(loginSuccess) {
         if (loginSuccess) {
             onLoginSuccess()
-            viewModel.logout()
         }
     }
 
@@ -100,16 +99,17 @@ fun LoginScreen(viewModel: MainViewModel, onLoginSuccess: () -> Unit) {
 
             // Email/Username TextField
             OutlinedTextField(
-                value = email,
-                onValueChange = { email = it },
+                value = username,
+                onValueChange = { username = it },
                 label = { Text("Kullanıcı Adı") },
                 leadingIcon = {
-                    Icon(Icons.Default.Email, contentDescription = "Email")
+                    Icon(Icons.Default.Person, contentDescription = "username")
                 },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp)
             )
+
 
             // Password TextField
             OutlinedTextField(
@@ -141,8 +141,8 @@ fun LoginScreen(viewModel: MainViewModel, onLoginSuccess: () -> Unit) {
                     isLoading = true
                     scope.launch {
 
-                        println("DEBUG: Sending username: '$email' and password: '$password'")
-                        viewModel.login(email, password)
+                        println("DEBUG: Sending username: '$username' and password: '$password'")
+                        viewModel.login(username, password)
                         isLoading = false
                     }
                 },
@@ -150,7 +150,7 @@ fun LoginScreen(viewModel: MainViewModel, onLoginSuccess: () -> Unit) {
                     .fillMaxWidth()
                     .height(56.dp),
                 shape = RoundedCornerShape(12.dp),
-                enabled = email.isNotEmpty() && password.isNotEmpty() && !isLoading
+                enabled = username.isNotEmpty() && password.isNotEmpty() && !isLoading
             ) {
                 if (isLoading) {
                     CircularProgressIndicator(

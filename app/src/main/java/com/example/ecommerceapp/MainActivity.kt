@@ -57,14 +57,17 @@ fun MainScreen(viewModel: MainViewModel, darkTheme: Boolean) {
     var isLoggedIn by remember { mutableStateOf(false) }
 
     if (!isLoggedIn) {
-        LoginScreen(viewModel = viewModel) { }
+        LoginScreen(viewModel = viewModel) {
+            isLoggedIn = true
+            println("DEBUG: isLoggedIn state changed to true.")
+        }
     } else {
 
         val bottomBarScreens = listOf(
             Screen.Home,
             Screen.Favorites,
             Screen.Cart,
-            Screen.Me // Artık Hesabım sekmesi de alt çubukta görünecek
+            Screen.Me
         )
 
         Scaffold(

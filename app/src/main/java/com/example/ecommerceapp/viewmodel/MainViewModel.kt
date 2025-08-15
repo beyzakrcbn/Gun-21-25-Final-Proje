@@ -20,7 +20,7 @@ class MainViewModel(
     private val repository: ProductRepository = ProductRepository()
 ) : ViewModel() {
 
-    // ---------- Tema ----------
+    // Tema
     val isDarkTheme: StateFlow<Boolean> =
         themePreferences.isDarkTheme.stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
@@ -30,76 +30,67 @@ class MainViewModel(
         }
     }
 
-    // ---------- Products ----------
+    // Products
     private val _products = MutableStateFlow(emptyList<Product>())
     val products: StateFlow<List<Product>> = _products.asStateFlow()
 
-    // ---------- Cart ----------
+    // Cart
     private val _cartItems = MutableStateFlow<List<CartItem>>(emptyList())
     val cartItems: StateFlow<List<CartItem>> = _cartItems.asStateFlow()
 
-    // ---------- Favorites ----------
-    private val _favorites = MutableStateFlow(emptyList<Product>())
-    val favorites: StateFlow<List<Product>> = _favorites.asStateFlow()
-
+    // Favorites
     private val _favoriteProductIds = MutableStateFlow<Set<Int>>(emptySet())
     val favoriteProductIds: StateFlow<Set<Int>> = _favoriteProductIds.asStateFlow()
 
-    // ---------- Search ----------
+    // Search
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
-    // ---------- Giriş Durumu ve Kullanıcı Bilgisi ----------
+    // Login State
     private val _loginSuccess = MutableStateFlow(false)
     val loginSuccess: StateFlow<Boolean> = _loginSuccess.asStateFlow()
 
     private val _loginError = MutableStateFlow<String?>(null)
     val loginError: StateFlow<String?> = _loginError.asStateFlow()
 
-    private val _currentUser = MutableStateFlow<LoginResponse?>(null) // Giriş yapan kullanıcı bilgisi
+    private val _currentUser = MutableStateFlow<LoginResponse?>(null)
     val currentUser: StateFlow<LoginResponse?> = _currentUser.asStateFlow()
-
 
     init {
         loadData()
     }
 
-    // KULLANICI GİRİŞ FONKSİYONU EKLENDİ
-    fun login(email: String, password: String) {
+    // Login
+    fun login(username: String, password: String) {
         viewModelScope.launch {
-            _loginError.value = null 
+            _loginError.value = null
             try {
-                // dummyjson.com için username kullanılır, email değil
-                // Eğer API'niz email bekliyorsa, UserRequest'i buna göre güncelleyin.
-                val request = User(username = email, password = password)
+                val request = User(username = username, password = password)
                 val response = repository.loginUser(request)
 
-                if (response.isSuccessful) {
+                if (response.isSuccessful && response.body() != null) {
                     _loginSuccess.value = true
                     _currentUser.value = response.body()
-                    println("Login Successful: ${response.body()?.username}") // Logcat'e yazdır
+                    println("✅ Login Successful: ${response.body()?.username}")
                 } else {
                     _loginSuccess.value = false
                     _loginError.value = "Giriş başarısız: " + (response.errorBody()?.string() ?: "Bilinmeyen hata")
-                    println("Login Failed: ${response.errorBody()?.string()}") // Logcat'e hata yazdır
+                    println("❌ Login Failed: ${response.errorBody()?.string()}")
                 }
             } catch (e: Exception) {
                 _loginSuccess.value = false
                 _loginError.value = "Ağ hatası: " + (e.localizedMessage ?: "Bilinmeyen hata")
-                println("Login Exception: ${e.localizedMessage}") // Logcat'e exception yazdır
+                println("⚠ Login Exception: ${e.localizedMessage}")
             }
         }
     }
 
-    // Kullanıcı çıkışı için (isteğe bağlı)
     fun logout() {
         _loginSuccess.value = false
         _currentUser.value = null
-        // Diğer oturum verilerini temizle
     }
 
-
-    /** API'den ürünleri yükle, başarısız olursa statik listeye düş **/
+    // Ürünleri yükle
     private fun loadData() {
         viewModelScope.launch {
             try {
@@ -107,17 +98,15 @@ class MainViewModel(
                 if (response.isSuccessful) {
                     _products.value = response.body()?.products ?: repository.getProducts()
                 } else {
-                    _products.value = repository.getProducts() // offline fallback
+                    _products.value = repository.getProducts()
                 }
-                _favorites.value = repository.getFavorites()
             } catch (e: Exception) {
-                _products.value = repository.getProducts() // offline fallback
-                _favorites.value = repository.getFavorites()
+                _products.value = repository.getProducts()
             }
         }
     }
 
-    /** API'den arama yap **/
+    // Search
     fun searchProducts(query: String) {
         _searchQuery.value = query
         if (query.isBlank()) {
@@ -137,9 +126,7 @@ class MainViewModel(
         }
     }
 
-
-
-    // ---------- Cart Fonksiyonları ----------
+    // Cart
     fun addToCart(product: Product, quantity: Int = 1) {
         val current = _cartItems.value.toMutableList()
         val index = current.indexOfFirst { it.product.id == product.id }
@@ -168,7 +155,7 @@ class MainViewModel(
         }
     }
 
-    // ---------- Favoriler ----------
+    // Favorites
     fun toggleFavorite(productId: Int) {
         val set = _favoriteProductIds.value.toMutableSet()
         if (!set.add(productId)) set.remove(productId)

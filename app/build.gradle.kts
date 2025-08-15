@@ -9,9 +9,6 @@
     }
 
 
-
-
-
 android {
     namespace = "com.example.ecommerceapp"
     compileSdk = 35
