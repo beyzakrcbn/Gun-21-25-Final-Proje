@@ -123,7 +123,7 @@ fun CartScreen(viewModel: MainViewModel) {
                     }
                 }
 
-                
+
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
                     shadowElevation = 8.dp,
