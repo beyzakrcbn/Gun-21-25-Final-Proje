@@ -24,7 +24,7 @@ import com.example.ecommerceapp.data.CartItem
 import com.example.ecommerceapp.viewmodel.MainViewModel
 import java.text.NumberFormat
 
-// Locale değişirse anlık doğru çalışması için formatter'ı her çağrıda oluşturuyoruz.
+
 private fun currency(amount: Double): String =
     NumberFormat.getCurrencyInstance().format(amount)
 
@@ -40,7 +40,7 @@ fun CartScreen(viewModel: MainViewModel) {
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface)
     ) {
-        // Üst bar
+
         Surface(
             modifier = Modifier.fillMaxWidth(),
             color = MaterialTheme.colorScheme.primary,
@@ -77,7 +77,7 @@ fun CartScreen(viewModel: MainViewModel) {
         }
 
         if (cartItems.isEmpty()) {
-            // Boş sepet
+
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -102,5 +102,104 @@ fun CartScreen(viewModel: MainViewModel) {
                 }
             }
         } else {
-            
+            Column(Modifier.fillMaxSize()) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(cartItems) { cartItem ->
+                        CartItemCard(
+                            cartItem = cartItem,
+                            onQuantityChange = { newQuantity ->
+                                viewModel.updateCartItemQuantity(cartItem.product.id, newQuantity)
+                            },
+                            onRemoveItem = {
+                                viewModel.removeFromCart(cartItem.product.id)
+                            }
+                        )
+                    }
+                }
+
+
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shadowElevation = 8.dp,
+                    color = MaterialTheme.colorScheme.surface
+                ) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                        shape = RoundedCornerShape(16.dp)
+                    ) {
+                        Column(Modifier.padding(20.dp)) {
+                            Text("Sipariş Özeti", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                            Spacer(Modifier.height(12.dp))
+
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text("Ürün Sayısı:")
+                                Text("$totalItems adet")
+                            }
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text("Ara Toplam:")
+                                Text(currency(totalPrice))
+                            }
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text("Kargo:")
+                                Text("Ücretsiz", color = MaterialTheme.colorScheme.primary)
+                            }
+
+                            HorizontalDivider(Modifier.padding(vertical = 8.dp)) // Divider yerine HorizontalDivider
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text("Toplam:", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                                Text(
+                                    currency(totalPrice),
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+
+                            Spacer(Modifier.height(16.dp))
+
+                            Button(
+                                onClick = { /* ödeme akışı */ },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(56.dp),
+                                shape = RoundedCornerShape(16.dp)
+                            ) {
+                                Icon(Icons.Default.Payment, contentDescription = null, modifier = Modifier.size(20.dp))
+                                Spacer(Modifier.width(8.dp))
+                                Text("ÖDEMEYİ TAMAMLA", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
+
+
