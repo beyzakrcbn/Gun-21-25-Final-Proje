@@ -76,6 +76,31 @@ fun CartScreen(viewModel: MainViewModel) {
             }
         }
 
-        
-    }
+        if (cartItems.isEmpty()) {
+            // Boş sepet
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Icon(
+                        Icons.Default.ShoppingCartCheckout,
+                        contentDescription = null,
+                        modifier = Modifier.size(80.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text("Sepetiniz boş", fontSize = 18.sp, fontWeight = FontWeight.Medium)
+                    Text(
+                        "Ürünleri sepete ekleyerek alışverişe başlayın",
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        } else {
+            
 }
