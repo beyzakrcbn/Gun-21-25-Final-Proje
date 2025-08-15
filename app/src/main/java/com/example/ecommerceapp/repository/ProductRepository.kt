@@ -3,13 +3,62 @@ package com.example.ecommerceapp.repository
 import com.example.ecommerceapp.data.Product
 
 class ProductRepository {
-    fun getProducts(): List<Product> = listOf(
-        Product(1, "iPhone 12 Pro", 1099.0, "", "Latest iPhone with A14 Bionic chip, 5G super fast downloads and so much more.", 4.5f, 123),
-        Product(2, "MacBook Pro", 1299.0, "", "MacBook Pro 13-inch with M1 chip", 4.7f, 456),
-        Product(3, "AirPods Pro", 249.0, "", "Active Noise Cancellation", 4.6f, 789),
-        Product(4, "iPad Air", 599.0, "", "iPad Air with M1 chip", 4.4f, 234),
-        Product(5, "Apple Watch", 399.0, "", "Apple Watch Series 8", 4.3f, 567)
-    )
 
-    fun getFavorites(): List<Product> = getProducts().take(2)
+    fun getProducts(): List<Product> {
+        return listOf(
+            Product(
+                id = 1,
+                name = "iPhone 12 Pro",
+                price = 999.0,
+                description = "Latest iPhone with A14 Bionic chip, 5G support, and amazing camera system.",
+                category = "Electronics",
+                rating = 4.5f,
+                stock = 25
+            ),
+            Product(
+                id = 2,
+                name = "MacBook Pro",
+                price = 1199.0,
+                description = "MacBook Pro 13-inch with M1 chip, 8GB unified memory, and 256GB SSD storage.",
+                category = "Electronics",
+                rating = 4.7f,
+                stock = 15
+            ),
+            Product(
+                id = 3,
+                name = "AirPods Pro",
+                price = 249.0,
+                description = "Active Noise Cancellation, Transparency mode, and spatial audio.",
+                category = "Electronics",
+                rating = 4.6f,
+                stock = 50
+            ),
+            Product(
+                id = 4,
+                name = "Apple Watch",
+                price = 399.0,
+                description = "Apple Watch Series 7 with larger Always-On Retina display.",
+                category = "Electronics",
+                rating = 4.4f,
+                stock = 30
+            ),
+            Product(
+                id = 5,
+                name = "iPad Air",
+                price = 599.0,
+                description = "iPad Air with 10.9-inch Liquid Retina display and A14 Bionic chip.",
+                category = "Electronics",
+                rating = 4.5f,
+                stock = 20
+            )
+        )
+    }
+
+    fun getFavorites(): List<Product> {
+        return emptyList() 
+    }
+
+    fun getProductById(id: Int): Product? {
+        return getProducts().find { it.id == id }
+    }
 }
