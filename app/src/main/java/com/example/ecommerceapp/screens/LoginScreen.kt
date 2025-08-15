@@ -1,6 +1,5 @@
 package com.example.ecommerceapp.screens
 
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -21,18 +20,33 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.delay
+import com.example.ecommerceapp.viewmodel.MainViewModel
 import kotlinx.coroutines.launch
-
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(onLoginSuccess: () -> Unit) {
+fun LoginScreen(viewModel: MainViewModel, onLoginSuccess: () -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+
+    val loginError by viewModel.loginError.collectAsState()
+    val loginSuccess by viewModel.loginSuccess.collectAsState()
+
+    LaunchedEffect(loginSuccess) {
+        if (loginSuccess) {
+            onLoginSuccess()
+            viewModel.logout()
+        }
+    }
+
+    LaunchedEffect(loginError) {
+        loginError?.let {
+            println("Login Error: $it")
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -46,7 +60,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Logo veya App İsmi
+            // ... (Diğer UI elemanları)
             Card(
                 modifier = Modifier.size(120.dp),
                 shape = RoundedCornerShape(60.dp),
@@ -84,11 +98,11 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Email TextField
+            // Email/Username TextField
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
-                label = { Text("E-mail") },
+                label = { Text("Kullanıcı Adı") },
                 leadingIcon = {
                     Icon(Icons.Default.Email, contentDescription = "Email")
                 },
@@ -125,10 +139,10 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
             Button(
                 onClick = {
                     isLoading = true
-                    // Simulate login process using coroutine scope
-                    kotlinx.coroutines.MainScope().launch {
-                        delay(1500)
-                        onLoginSuccess()
+                    scope.launch {
+
+                        println("DEBUG: Sending username: '$email' and password: '$password'")
+                        viewModel.login(email, password)
                         isLoading = false
                     }
                 },
@@ -170,4 +184,3 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
         )
     }
 }
-

@@ -1,10 +1,12 @@
 package com.example.ecommerceapp.repository
 
 
+import com.example.ecommerceapp.data.LoginResponse
 import com.example.ecommerceapp.data.Product
 import com.example.ecommerceapp.data.ProductResponse
 import com.example.ecommerceapp.network.RetrofitClient
 import retrofit2.Response
+import com.example.ecommerceapp.data.User
 
 class ProductRepository {
 
@@ -16,6 +18,11 @@ class ProductRepository {
     // API'den arama yap
     suspend fun searchProducts(query: String): Response<ProductResponse> {
         return RetrofitClient.apiService.searchProducts(query)
+    }
+    // KULLANICI GİRİŞ FONKSİYONU EKLENDİ
+
+    suspend fun loginUser(request: User): Response<LoginResponse> { // UserRequest yerine User
+        return RetrofitClient.apiService.loginUser(request)
     }
 
     // Offline fallback: statik veri

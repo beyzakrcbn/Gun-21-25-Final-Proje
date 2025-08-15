@@ -1,5 +1,5 @@
-package com.example.ecommerceapp.data
 
+package com.example.ecommerceapp.data
 
 data class ProductResponse(
     val products: List<Product>,

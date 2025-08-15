@@ -1,11 +1,12 @@
 package com.example.ecommerceapp.viewmodel
 
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ecommerceapp.data.CartItem
 import com.example.ecommerceapp.data.Product
 import com.example.ecommerceapp.data.ThemePreferences
+import com.example.ecommerceapp.data.User
+import com.example.ecommerceapp.data.LoginResponse
 import com.example.ecommerceapp.repository.ProductRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -48,9 +49,55 @@ class MainViewModel(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
+    // ---------- Giriş Durumu ve Kullanıcı Bilgisi ----------
+    private val _loginSuccess = MutableStateFlow(false)
+    val loginSuccess: StateFlow<Boolean> = _loginSuccess.asStateFlow()
+
+    private val _loginError = MutableStateFlow<String?>(null)
+    val loginError: StateFlow<String?> = _loginError.asStateFlow()
+
+    private val _currentUser = MutableStateFlow<LoginResponse?>(null) // Giriş yapan kullanıcı bilgisi
+    val currentUser: StateFlow<LoginResponse?> = _currentUser.asStateFlow()
+
+
     init {
         loadData()
     }
+
+    // KULLANICI GİRİŞ FONKSİYONU EKLENDİ
+    fun login(email: String, password: String) {
+        viewModelScope.launch {
+            _loginError.value = null 
+            try {
+                // dummyjson.com için username kullanılır, email değil
+                // Eğer API'niz email bekliyorsa, UserRequest'i buna göre güncelleyin.
+                val request = User(username = email, password = password)
+                val response = repository.loginUser(request)
+
+                if (response.isSuccessful) {
+                    _loginSuccess.value = true
+                    _currentUser.value = response.body()
+                    println("Login Successful: ${response.body()?.username}") // Logcat'e yazdır
+                } else {
+                    _loginSuccess.value = false
+                    _loginError.value = "Giriş başarısız: " + (response.errorBody()?.string() ?: "Bilinmeyen hata")
+                    println("Login Failed: ${response.errorBody()?.string()}") // Logcat'e hata yazdır
+                }
+            } catch (e: Exception) {
+                _loginSuccess.value = false
+                _loginError.value = "Ağ hatası: " + (e.localizedMessage ?: "Bilinmeyen hata")
+                println("Login Exception: ${e.localizedMessage}") // Logcat'e exception yazdır
+            }
+        }
+    }
+
+    // Kullanıcı çıkışı için (isteğe bağlı)
+    fun logout() {
+        _loginSuccess.value = false
+        _currentUser.value = null
+        // Diğer oturum verilerini temizle
+    }
+
 
     /** API'den ürünleri yükle, başarısız olursa statik listeye düş **/
     private fun loadData() {
@@ -89,6 +136,8 @@ class MainViewModel(
             }
         }
     }
+
+
 
     // ---------- Cart Fonksiyonları ----------
     fun addToCart(product: Product, quantity: Int = 1) {

@@ -57,7 +57,7 @@ fun MainScreen(viewModel: MainViewModel, darkTheme: Boolean) {
     var isLoggedIn by remember { mutableStateOf(false) }
 
     if (!isLoggedIn) {
-        LoginScreen { isLoggedIn = true }
+        LoginScreen(viewModel = viewModel) { }
     } else {
 
         val bottomBarScreens = listOf(
