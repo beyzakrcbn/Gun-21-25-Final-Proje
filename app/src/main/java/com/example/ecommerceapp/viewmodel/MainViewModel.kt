@@ -1,5 +1,6 @@
 package com.example.ecommerceapp.viewmodel
 
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ecommerceapp.data.CartItem
@@ -51,11 +52,45 @@ class MainViewModel(
         loadData()
     }
 
+    /** API'den ürünleri yükle, başarısız olursa statik listeye düş **/
     private fun loadData() {
-        _products.value = repository.getProducts()
-        _favorites.value = repository.getFavorites()
+        viewModelScope.launch {
+            try {
+                val response = repository.fetchProductsFromApi()
+                if (response.isSuccessful) {
+                    _products.value = response.body()?.products ?: repository.getProducts()
+                } else {
+                    _products.value = repository.getProducts() // offline fallback
+                }
+                _favorites.value = repository.getFavorites()
+            } catch (e: Exception) {
+                _products.value = repository.getProducts() // offline fallback
+                _favorites.value = repository.getFavorites()
+            }
+        }
     }
 
+    /** API'den arama yap **/
+    fun searchProducts(query: String) {
+        _searchQuery.value = query
+        if (query.isBlank()) {
+            loadData()
+            return
+        }
+
+        viewModelScope.launch {
+            try {
+                val response = repository.searchProducts(query)
+                if (response.isSuccessful) {
+                    _products.value = response.body()?.products ?: emptyList()
+                }
+            } catch (e: Exception) {
+                println("Search Error: ${e.localizedMessage}")
+            }
+        }
+    }
+
+    // ---------- Cart Fonksiyonları ----------
     fun addToCart(product: Product, quantity: Int = 1) {
         val current = _cartItems.value.toMutableList()
         val index = current.indexOfFirst { it.product.id == product.id }
@@ -84,6 +119,7 @@ class MainViewModel(
         }
     }
 
+    // ---------- Favoriler ----------
     fun toggleFavorite(productId: Int) {
         val set = _favoriteProductIds.value.toMutableSet()
         if (!set.add(productId)) set.remove(productId)
@@ -98,15 +134,4 @@ class MainViewModel(
 
     fun getProductById(productId: Int): Product? =
         _products.value.find { it.id == productId }
-
-    fun updateSearchQuery(query: String) { _searchQuery.value = query }
-
-    fun getFilteredProducts(): List<Product> {
-        val q = _searchQuery.value
-        return if (q.isBlank()) _products.value else _products.value.filter {
-            it.name.contains(q, true) ||
-                    it.description.contains(q, true) ||
-                    it.category.contains(q, true)
-        }
-    }
 }

@@ -1,9 +1,24 @@
 package com.example.ecommerceapp.repository
 
+
 import com.example.ecommerceapp.data.Product
+import com.example.ecommerceapp.data.ProductResponse
+import com.example.ecommerceapp.network.RetrofitClient
+import retrofit2.Response
 
 class ProductRepository {
 
+    // API'den ürünleri çek
+    suspend fun fetchProductsFromApi(): Response<ProductResponse> {
+        return RetrofitClient.apiService.getProducts()
+    }
+
+    // API'den arama yap
+    suspend fun searchProducts(query: String): Response<ProductResponse> {
+        return RetrofitClient.apiService.searchProducts(query)
+    }
+
+    // Offline fallback: statik veri
     fun getProducts(): List<Product> {
         return listOf(
             Product(

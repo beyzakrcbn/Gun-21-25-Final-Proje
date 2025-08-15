@@ -47,6 +47,7 @@ sealed class Screen(val route: String, val title: String, val icon: ImageVector)
     object Favorites : Screen("favorites", "Favoriler", Icons.Filled.Favorite)
     object Cart : Screen("cart", "Sepet", Icons.Filled.ShoppingCart)
     object ProductDetail : Screen("product_detail", "Ürün Detayı", Icons.Filled.Info)
+    object Me : Screen("profile", "Hesabım", Icons.Filled.Person) // Bu satır zaten doğru
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,10 +59,12 @@ fun MainScreen(viewModel: MainViewModel, darkTheme: Boolean) {
     if (!isLoggedIn) {
         LoginScreen { isLoggedIn = true }
     } else {
+
         val bottomBarScreens = listOf(
             Screen.Home,
             Screen.Favorites,
-            Screen.Cart
+            Screen.Cart,
+            Screen.Me // Artık Hesabım sekmesi de alt çubukta görünecek
         )
 
         Scaffold(
@@ -102,6 +105,7 @@ fun MainScreen(viewModel: MainViewModel, darkTheme: Boolean) {
                 }
             }
         ) { paddingValues ->
+
             NavHost(
                 navController = navController,
                 startDestination = Screen.Home.route,
@@ -115,6 +119,9 @@ fun MainScreen(viewModel: MainViewModel, darkTheme: Boolean) {
                 }
                 composable(Screen.Cart.route) {
                     CartScreen(viewModel)
+                }
+                composable(Screen.Me.route) { // "profile" rotasına karşılık gelir
+                    ProfileScreen(navController)
                 }
                 composable("${Screen.ProductDetail.route}/{productId}") { backStackEntry ->
                     val productId = backStackEntry.arguments?.getString("productId")?.toIntOrNull()
