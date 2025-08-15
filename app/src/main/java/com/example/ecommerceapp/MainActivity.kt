@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// Navigation yapısı
+
 sealed class Screen(val route: String, val title: String, val icon: ImageVector) {
     object Login : Screen("login", "Giriş", Icons.Filled.Person)
     object Home : Screen("home", "Ürünler", Icons.Filled.Home)

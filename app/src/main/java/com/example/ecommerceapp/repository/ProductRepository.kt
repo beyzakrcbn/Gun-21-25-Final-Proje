@@ -55,7 +55,7 @@ class ProductRepository {
     }
 
     fun getFavorites(): List<Product> {
-        return emptyList() 
+        return emptyList()
     }
 
     fun getProductById(id: Int): Product? {
