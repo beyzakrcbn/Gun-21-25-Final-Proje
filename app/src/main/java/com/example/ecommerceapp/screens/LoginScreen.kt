@@ -35,152 +35,161 @@ fun LoginScreen(viewModel: MainViewModel, onLoginSuccess: () -> Unit) {
     val loginError by viewModel.loginError.collectAsState()
     val loginSuccess by viewModel.loginSuccess.collectAsState()
 
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    // Başarılı girişte yönlendir
     LaunchedEffect(loginSuccess) {
         if (loginSuccess) {
             onLoginSuccess()
         }
     }
 
+    // Hata olduğunda Snackbar göster
     LaunchedEffect(loginError) {
         loginError?.let {
-            println("Login Error: $it")
+            scope.launch {
+                snackbarHostState.showSnackbar(it)
+            }
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp)
-    ) {
-        Column(
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { padding ->
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.Center),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .fillMaxSize()
+                .padding(padding)
+                .padding(24.dp)
         ) {
-            // ... (Diğer UI elemanları)
-            Card(
-                modifier = Modifier.size(120.dp),
-                shape = RoundedCornerShape(60.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                )
-            ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "E-Shop",
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-                }
-            }
-
-            Text(
-                text = "E-Commerce App'e Hoş Geldiniz!",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            Text(
-                text = "Hesabınıza giriş yapın",
-                fontSize = 16.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // Email/Username TextField
-            OutlinedTextField(
-                value = username,
-                onValueChange = { username = it },
-                label = { Text("Kullanıcı Adı") },
-                leadingIcon = {
-                    Icon(Icons.Default.Person, contentDescription = "username")
-                },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp)
-            )
-
-
-            // Password TextField
-            OutlinedTextField(
-                value = password,
-                onValueChange = { password = it },
-                label = { Text("Şifre") },
-                leadingIcon = {
-                    Icon(Icons.Default.Lock, contentDescription = "Password")
-                },
-                trailingIcon = {
-                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                        Icon(
-                            if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                            contentDescription = if (passwordVisible) "Şifreyi gizle" else "Şifreyi göster"
-                        )
-                    }
-                },
-                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp)
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Login Button
-            Button(
-                onClick = {
-                    isLoading = true
-                    scope.launch {
-
-                        println("DEBUG: Sending username: '$username' and password: '$password'")
-                        viewModel.login(username, password)
-                        isLoading = false
-                    }
-                },
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
-                shape = RoundedCornerShape(12.dp),
-                enabled = username.isNotEmpty() && password.isNotEmpty() && !isLoading
+                    .align(Alignment.Center),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                if (isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        color = Color.White
+                // Logo Card
+                Card(
+                    modifier = Modifier.size(120.dp),
+                    shape = RoundedCornerShape(60.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primary
                     )
-                } else {
-                    Text(
-                        text = "GİRİŞ YAP",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                ) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "E-Shop",
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
+                }
+
+                Text(
+                    text = "E-Commerce App'e Hoş Geldiniz!",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.primary
+                )
+
+                Text(
+                    text = "Hesabınıza giriş yapın",
+                    fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                // Username TextField
+                OutlinedTextField(
+                    value = username,
+                    onValueChange = { username = it },
+                    label = { Text("Kullanıcı Adı") },
+                    leadingIcon = {
+                        Icon(Icons.Default.Person, contentDescription = "username")
+                    },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp)
+                )
+
+                // Password TextField
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    label = { Text("Şifre") },
+                    leadingIcon = {
+                        Icon(Icons.Default.Lock, contentDescription = "Password")
+                    },
+                    trailingIcon = {
+                        IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                            Icon(
+                                if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                contentDescription = if (passwordVisible) "Şifreyi gizle" else "Şifreyi göster"
+                            )
+                        }
+                    },
+                    visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp)
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // Login Button
+                Button(
+                    onClick = {
+                        isLoading = true
+                        scope.launch {
+                            println("DEBUG: Sending username: '$username' and password: '$password'")
+                            viewModel.login(username, password)
+                            isLoading = false
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    enabled = username.isNotEmpty() && password.isNotEmpty() && !isLoading
+                ) {
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            color = Color.White
+                        )
+                    } else {
+                        Text(
+                            text = "GİRİŞ YAP",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                TextButton(onClick = { /* Handle forgot password */ }) {
+                    Text("Şifrenizi mi unuttunuz?")
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            TextButton(onClick = { /* Handle forgot password */ }) {
-                Text("Şifrenizi mi unuttunuz?")
-            }
+            // Footer
+            Text(
+                text = "Hesabınız yok mu? Kayıt olun",
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 16.dp),
+                color = MaterialTheme.colorScheme.primary,
+                fontSize = 14.sp
+            )
         }
-
-        // Footer
-        Text(
-            text = "Hesabınız yok mu? Kayıt olun",
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 16.dp),
-            color = MaterialTheme.colorScheme.primary,
-            fontSize = 14.sp
-        )
     }
 }
