@@ -11,6 +11,10 @@ data class Product(
     val category: String = "",
     val rating: Float = 0f,
     val stock: Int = 0,
-    val reviews: Int = 0 // API'de reviews yok, istersen sabit tutarsın
-)
-
+    val reviews: Int = 0, // API'de reviews yok
+    val images: List<String> = emptyList()
+) {
+    fun getBestImage(): String {
+        return if (imageUrl.isNotEmpty()) imageUrl else images.firstOrNull() ?: ""
+    }
+}

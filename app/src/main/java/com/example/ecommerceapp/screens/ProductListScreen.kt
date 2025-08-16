@@ -94,7 +94,7 @@ private fun ProductRow(
             verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
-                model = product.imageUrl,
+                model = product.getBestImage(),
                 contentDescription = product.name,
                 modifier = Modifier
                     .size(72.dp)

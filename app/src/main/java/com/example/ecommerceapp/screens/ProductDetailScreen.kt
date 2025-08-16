@@ -20,6 +20,10 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.ecommerceapp.viewmodel.MainViewModel
+import coil.compose.AsyncImage
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.draw.clip
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -93,11 +97,11 @@ fun ProductDetailScreen(
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    Icons.Default.Phone,
-                    contentDescription = "Product Image",
-                    tint = Color.White,
-                    modifier = Modifier.size(120.dp)
+                AsyncImage(
+                    model = product.imageUrl,
+                    contentDescription = product.name,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
                 )
             }
 

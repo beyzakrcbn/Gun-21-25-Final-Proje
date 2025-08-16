@@ -1,5 +1,6 @@
 package com.example.ecommerceapp.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ecommerceapp.data.CartItem
@@ -63,6 +64,7 @@ class MainViewModel(
     // Login
     fun login(username: String, password: String) {
         viewModelScope.launch {
+
             _loginError.value = null
             try {
                 val request = User(username = username, password = password)
@@ -118,6 +120,15 @@ class MainViewModel(
             try {
                 val response = repository.searchProducts(query)
                 if (response.isSuccessful) {
+                    val products = response.body()?.products ?: emptyList()
+                    _products.value = products
+
+                    // İlk ürünün resimlerini logla
+                    if (products.isNotEmpty()) {
+                        val firstProduct = products.first()
+                        Log.d("API_TEST", "Thumbnail: ${firstProduct.imageUrl}")
+                        Log.d("API_TEST", "Images: ${firstProduct.images}")
+                    }
                     _products.value = response.body()?.products ?: emptyList()
                 }
             } catch (e: Exception) {

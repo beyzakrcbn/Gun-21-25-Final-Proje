@@ -124,7 +124,7 @@ fun MainScreen(viewModel: MainViewModel, darkTheme: Boolean) {
                     CartScreen(viewModel)
                 }
                 composable(Screen.Me.route) { // "profile" rotasına karşılık gelir
-                    ProfileScreen(navController)
+                    ProfileScreen(navController, viewModel)
                 }
                 composable("${Screen.ProductDetail.route}/{productId}") { backStackEntry ->
                     val productId = backStackEntry.arguments?.getString("productId")?.toIntOrNull()
