@@ -1,5 +1,6 @@
 package com.example.ecommerceapp.viewmodel
 
+import com.example.ecommerceapp.data.PaymentStatus
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,6 +9,7 @@ import com.example.ecommerceapp.data.Product
 import com.example.ecommerceapp.data.ThemePreferences
 import com.example.ecommerceapp.data.User
 import com.example.ecommerceapp.data.LoginResponse
+import com.example.ecommerceapp.data.PaymentData
 import com.example.ecommerceapp.repository.ProductRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -30,6 +32,9 @@ class MainViewModel(
             themePreferences.setDarkTheme(!isDarkTheme.value)
         }
     }
+
+    private val _paymentStatus = MutableStateFlow<PaymentStatus>(PaymentStatus.Idle)
+    val paymentStatus: StateFlow<PaymentStatus> = _paymentStatus.asStateFlow()
 
     // Products
     private val _products = MutableStateFlow(emptyList<Product>())
@@ -198,8 +203,40 @@ class MainViewModel(
     }
 
     fun isFavorite(productId: Int): Boolean {
-        return _favoriteProductIds.value.contains(productId).also {
-            Log.d("FAVORITE", "$productId favori mi: $it")
+        return _favoriteProductIds.value.contains(productId)
+    }
+
+    // Payment işlemleri
+    fun processPayment(paymentData: PaymentData) {
+        viewModelScope.launch {
+            _paymentStatus.value = PaymentStatus.Loading
+
+            try {
+                // Payment data'yı logla
+                Log.d("PAYMENT", "Ödeme başlatıldı - Tutar: ${paymentData.totalAmount}, Yöntem: ${paymentData.paymentMethod}")
+
+                // Simülasyon - 2 saniye bekleme
+                kotlinx.coroutines.delay(2000)
+
+                // %90 başarı oranı simülasyonu
+                if (kotlin.random.Random.nextDouble() > 0.1) {
+                    val orderId = "#${kotlin.random.Random.nextInt(10000, 99999)}"
+                    _paymentStatus.value = PaymentStatus.Success(orderId)
+
+                    // Başarılı ödeme sonrası sepeti temizle
+                    _cartItems.value = emptyList()
+                    Log.d("PAYMENT", "Ödeme başarılı. Sipariş no: $orderId")
+                } else {
+                    _paymentStatus.value = PaymentStatus.Error("Ödeme işlemi başarısız. Lütfen tekrar deneyin.")
+                }
+            } catch (e: Exception) {
+                _paymentStatus.value = PaymentStatus.Error("Ağ hatası: ${e.localizedMessage}")
+                Log.e("PAYMENT", "Payment error: ${e.localizedMessage}")
+            }
         }
+    }
+
+    fun resetPaymentStatus() {
+        _paymentStatus.value = PaymentStatus.Idle
     }
 }

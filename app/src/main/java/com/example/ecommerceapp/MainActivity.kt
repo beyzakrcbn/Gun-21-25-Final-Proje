@@ -121,10 +121,13 @@ fun MainScreen(viewModel: MainViewModel, darkTheme: Boolean) {
                     FavoritesScreen(viewModel)
                 }
                 composable(Screen.Cart.route) {
-                    CartScreen(viewModel)
+                    CartScreen(viewModel, navController)
                 }
                 composable(Screen.Me.route) { // "profile" rotasına karşılık gelir
                     ProfileScreen(navController, viewModel)
+                }
+                composable("payment") {
+                    PaymentScreen(viewModel, navController)
                 }
                 composable("${Screen.ProductDetail.route}/{productId}") { backStackEntry ->
                     val productId = backStackEntry.arguments?.getString("productId")?.toIntOrNull()

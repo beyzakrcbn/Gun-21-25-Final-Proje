@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.example.ecommerceapp.data.CartItem
 import com.example.ecommerceapp.viewmodel.MainViewModel
 import java.text.NumberFormat
@@ -29,7 +30,7 @@ private fun currency(amount: Double): String =
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CartScreen(viewModel: MainViewModel) {
+fun CartScreen(viewModel: MainViewModel,navController: NavController) {
     val cartItems by viewModel.cartItems.collectAsStateWithLifecycle()
     val totalPrice = cartItems.sumOf { it.product.price * it.quantity }
     val totalItems = cartItems.sumOf { it.quantity }
@@ -183,11 +184,17 @@ fun CartScreen(viewModel: MainViewModel) {
                             Spacer(Modifier.height(16.dp))
 
                             Button(
-                                onClick = { /* ödeme akışı */ },
+                                onClick = {
+                                    if (cartItems.isNotEmpty()) {
+                                        // Navigation ile payment ekranına git
+                                        navController.navigate("payment")
+                                    }
+                                },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(56.dp),
-                                shape = RoundedCornerShape(16.dp)
+                                shape = RoundedCornerShape(16.dp),
+                                enabled = cartItems.isNotEmpty() // Sepet boşsa butonu deaktif et
                             ) {
                                 Icon(Icons.Default.Payment, contentDescription = null, modifier = Modifier.size(20.dp))
                                 Spacer(Modifier.width(8.dp))
