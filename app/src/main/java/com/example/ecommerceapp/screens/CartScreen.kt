@@ -24,7 +24,6 @@ import com.example.ecommerceapp.data.CartItem
 import com.example.ecommerceapp.viewmodel.MainViewModel
 import java.text.NumberFormat
 
-
 private fun currency(amount: Double): String =
     NumberFormat.getCurrencyInstance().format(amount)
 
@@ -40,7 +39,6 @@ fun CartScreen(viewModel: MainViewModel) {
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface)
     ) {
-
         Surface(
             modifier = Modifier.fillMaxWidth(),
             color = MaterialTheme.colorScheme.primary,
@@ -77,7 +75,6 @@ fun CartScreen(viewModel: MainViewModel) {
         }
 
         if (cartItems.isEmpty()) {
-
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -123,7 +120,6 @@ fun CartScreen(viewModel: MainViewModel) {
                     }
                 }
 
-
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
                     shadowElevation = 8.dp,
@@ -139,7 +135,6 @@ fun CartScreen(viewModel: MainViewModel) {
                         Column(Modifier.padding(20.dp)) {
                             Text("Sipariş Özeti", fontSize = 18.sp, fontWeight = FontWeight.Bold)
                             Spacer(Modifier.height(12.dp))
-
 
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -165,7 +160,11 @@ fun CartScreen(viewModel: MainViewModel) {
                                 Text("Ücretsiz", color = MaterialTheme.colorScheme.primary)
                             }
 
-                            HorizontalDivider(Modifier.padding(vertical = 8.dp)) // Divider yerine HorizontalDivider
+                            // DÜZELTİLMİŞ BÖLÜM - HorizontalDivider yerine Divider kullanımı
+                            Divider(
+                                modifier = Modifier.padding(vertical = 8.dp),
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+                            )
 
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -200,11 +199,6 @@ fun CartScreen(viewModel: MainViewModel) {
             }
         }
     }
-}
-
-@Composable
-fun HorizontalDivider(x0: Modifier) {
-    TODO("Not yet implemented")
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

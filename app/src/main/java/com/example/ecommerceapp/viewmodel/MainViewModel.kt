@@ -64,7 +64,6 @@ class MainViewModel(
     // Login
     fun login(username: String, password: String) {
         viewModelScope.launch {
-
             _loginError.value = null
             try {
                 val request = User(username = username, password = password)
@@ -73,16 +72,16 @@ class MainViewModel(
                 if (response.isSuccessful && response.body() != null) {
                     _loginSuccess.value = true
                     _currentUser.value = response.body()
-                    println("✅ Login Successful: ${response.body()?.username}")
+                    Log.d("LOGIN", "Login Successful: ${response.body()?.username}")
                 } else {
                     _loginSuccess.value = false
                     _loginError.value = "Giriş başarısız: " + (response.errorBody()?.string() ?: "Bilinmeyen hata")
-                    println("❌ Login Failed: ${response.errorBody()?.string()}")
+                    Log.e("LOGIN", "Login Failed: ${response.errorBody()?.string()}")
                 }
             } catch (e: Exception) {
                 _loginSuccess.value = false
                 _loginError.value = "Ağ hatası: " + (e.localizedMessage ?: "Bilinmeyen hata")
-                println("⚠ Login Exception: ${e.localizedMessage}")
+                Log.e("LOGIN", "Login Exception: ${e.localizedMessage}")
             }
         }
     }
@@ -98,12 +97,23 @@ class MainViewModel(
             try {
                 val response = repository.fetchProductsFromApi()
                 if (response.isSuccessful) {
-                    _products.value = response.body()?.products ?: repository.getProducts()
+                    val products = response.body()?.products ?: emptyList()
+                    _products.value = products
+                    Log.d("API", "Ürünler başarıyla yüklendi: ${products.size} adet")
+
+                    // İlk ürünün bilgilerini logla
+                    if (products.isNotEmpty()) {
+                        val firstProduct = products.first()
+                        Log.d("API_TEST", "Thumbnail: ${firstProduct.imageUrl}")
+                        Log.d("API_TEST", "Images: ${firstProduct.images}")
+                    }
                 } else {
                     _products.value = repository.getProducts()
+                    Log.e("API", "API isteği başarısız: ${response.code()}")
                 }
             } catch (e: Exception) {
                 _products.value = repository.getProducts()
+                Log.e("API", "Ürün yükleme hatası: ${e.localizedMessage}")
             }
         }
     }
@@ -122,63 +132,74 @@ class MainViewModel(
                 if (response.isSuccessful) {
                     val products = response.body()?.products ?: emptyList()
                     _products.value = products
-
-                    // İlk ürünün resimlerini logla
-                    if (products.isNotEmpty()) {
-                        val firstProduct = products.first()
-                        Log.d("API_TEST", "Thumbnail: ${firstProduct.imageUrl}")
-                        Log.d("API_TEST", "Images: ${firstProduct.images}")
-                    }
-                    _products.value = response.body()?.products ?: emptyList()
+                    Log.d("SEARCH", "${products.size} ürün bulundu")
+                } else {
+                    Log.e("SEARCH", "Arama başarısız: ${response.code()}")
                 }
             } catch (e: Exception) {
-                println("Search Error: ${e.localizedMessage}")
+                Log.e("SEARCH", "Arama hatası: ${e.localizedMessage}")
             }
         }
     }
 
-    // Cart
+    // Cart - GÜNCELLENDİ
     fun addToCart(product: Product, quantity: Int = 1) {
         val current = _cartItems.value.toMutableList()
-        val index = current.indexOfFirst { it.product.id == product.id }
-        if (index >= 0) {
-            val old = current[index]
-            current[index] = old.copy(quantity = old.quantity + quantity)
+        val existingItemIndex = current.indexOfFirst { it.product.id == product.id }
+
+        if (existingItemIndex >= 0) {
+            // Ürün sepette varsa miktarı güncelle
+            val existingItem = current[existingItemIndex]
+            current[existingItemIndex] = existingItem.copy(quantity = existingItem.quantity + quantity)
+            Log.d("CART", "${product.name} ürününün miktarı güncellendi: ${existingItem.quantity + quantity}")
         } else {
-            current += CartItem(product, quantity)
+            // Yeni ürün ekle
+            current.add(CartItem(product, quantity))
+            Log.d("CART", "Yeni ürün eklendi: ${product.name} (Adet: $quantity)")
         }
+
         _cartItems.value = current
+        Log.d("CART", "Sepetteki toplam ürün sayısı: ${_cartItems.value.size}")
     }
 
     fun removeFromCart(productId: Int) {
         _cartItems.value = _cartItems.value.filter { it.product.id != productId }
+        Log.d("CART", "Ürün sepetten çıkarıldı: $productId")
     }
 
     fun updateCartItemQuantity(productId: Int, newQuantity: Int) {
         if (newQuantity <= 0) {
-            removeFromCart(productId); return
+            removeFromCart(productId)
+            return
         }
-        val currentCart = _cartItems.value.toMutableList()
-        val i = currentCart.indexOfFirst { it.product.id == productId }
-        if (i != -1) {
-            currentCart[i] = currentCart[i].copy(quantity = newQuantity)
-            _cartItems.value = currentCart
+
+        _cartItems.value = _cartItems.value.map { item ->
+            if (item.product.id == productId) {
+                Log.d("CART", "${item.product.name} miktarı güncellendi: ${item.quantity} -> $newQuantity")
+                item.copy(quantity = newQuantity)
+            } else {
+                item
+            }
         }
     }
 
-    // Favorites
+    // Favorites - GÜNCELLENDİ
     fun toggleFavorite(productId: Int) {
-        val set = _favoriteProductIds.value.toMutableSet()
-        if (!set.add(productId)) set.remove(productId)
-        _favoriteProductIds.value = set
+        _favoriteProductIds.value = _favoriteProductIds.value.toMutableSet().apply {
+            if (contains(productId)) {
+                remove(productId)
+                Log.d("FAVORITE", "Ürün favorilerden çıkarıldı: $productId")
+            } else {
+                add(productId)
+                Log.d("FAVORITE", "Ürün favorilere eklendi: $productId")
+            }
+        }
+        Log.d("FAVORITE", "Güncel favori sayısı: ${_favoriteProductIds.value.size}")
     }
 
-    fun isFavorite(productId: Int): Boolean =
-        _favoriteProductIds.value.contains(productId)
-
-    fun getFavoriteProducts(): List<Product> =
-        _products.value.filter { _favoriteProductIds.value.contains(it.id) }
-
-    fun getProductById(productId: Int): Product? =
-        _products.value.find { it.id == productId }
+    fun isFavorite(productId: Int): Boolean {
+        return _favoriteProductIds.value.contains(productId).also {
+            Log.d("FAVORITE", "$productId favori mi: $it")
+        }
+    }
 }
